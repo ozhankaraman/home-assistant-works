@@ -1,0 +1,49 @@
+alias: Dehumidifier Control
+description: Turn on dehumidifier when humidity exceeds 81% and off when below 76%
+triggers:
+  - entity_id: sensor.bedroom_temperature_humidity_sensor_humidity
+    above: 80
+    id: bedroom_high
+    trigger: numeric_state
+  - entity_id: sensor.dehumidifier_temperature_humidity_sensor_humidity
+    above: 80
+    id: cooridor_high
+    trigger: numeric_state
+  - entity_id: sensor.bedroom_temperature_humidity_sensor_humidity
+    below: 76
+    id: bedroom_low
+    trigger: numeric_state
+  - entity_id: sensor.dehumidifier_temperature_humidity_sensor_humidity
+    below: 76
+    id: cooridor_low
+    trigger: numeric_state
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: or
+            conditions:
+              - condition: numeric_state
+                entity_id: sensor.bedroom_temperature_humidity_sensor_humidity
+                above: 80
+              - condition: numeric_state
+                entity_id: sensor.dehumidifier_temperature_humidity_sensor_humidity
+                above: 80
+        sequence:
+          - target:
+              entity_id: switch.dehumidifier_finger_bot
+            action: switch.turn_on
+      - conditions:
+          - condition: and
+            conditions:
+              - condition: numeric_state
+                entity_id: sensor.bedroom_temperature_humidity_sensor_humidity
+                below: 76
+              - condition: numeric_state
+                entity_id: sensor.dehumidifier_temperature_humidity_sensor_humidity
+                below: 76
+        sequence:
+          - target:
+              entity_id: switch.dehumidifier_finger_bot
+            action: switch.turn_off
+mode: single
