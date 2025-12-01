@@ -1,0 +1,54 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+# Add this to your configuration.yaml file
+
+template:
+  - binary_sensor:
+      - name: "Dehumidifier Running"
+        unique_id: dehumidifier_running_status
+        device_class: running
+        state: >
+          {{ states('sensor.dehumidifier_current_consumption') | float(0) > 10 }}
+        icon: >
+          {% if states('sensor.dehumidifier_current_consumption') | float(0) > 10 %}
+            mdi:air-humidifier
+          {% else %}
+            mdi:air-humidifier-off
+          {% endif %}
+        attributes:
+          power_consumption: "{{ states('sensor.dehumidifier_current_consumption') }} W"
+          bedroom_humidity: "{{ states('sensor.bedroom_temperature_humidity_sensor_humidity') }}%"
+          corridor_humidity: "{{ states('sensor.dehumidifier_temperature_humidity_sensor_humidity') }}%"
+
+  # Optional: Create a switch entity if you want manual control
+  - switch:
+      - name: "Dehumidifier Status"
+        unique_id: dehumidifier_status_switch
+        state: >
+          {{ states('sensor.dehumidifier_current_consumption') | float(0) > 10 }}
+        turn_on:
+          - service: automation.trigger
+            target:
+              entity_id: automation.dehumidifier_control
+            data:
+              skip_condition: true
+        turn_off:
+          - service: switch.turn_off
+            target:
+              entity_id: switch.dehumidifier_finger_bot
+        icon: >
+          {% if states('sensor.dehumidifier_current_consumption') | float(0) > 10 %}
+            mdi:air-humidifier
+          {% else %}
+            mdi:air-humidifier-off
+          {% endif %}
