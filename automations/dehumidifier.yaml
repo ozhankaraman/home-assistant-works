@@ -1,20 +1,22 @@
 alias: Dehumidifier Control
-description: Turn on dehumidifier when humidity exceeds 81% and off when below 76%
+description: >-
+  Turn on dehumidifier when humidity exceeds 71% and off when below 65% with
+  retry logic
 triggers:
   - entity_id: sensor.bedroom_temperature_humidity_sensor_humidity
-    above: 80
+    above: 71
     id: bedroom_high
     trigger: numeric_state
   - entity_id: sensor.dehumidifier_temperature_humidity_sensor_humidity
-    above: 80
+    above: 71
     id: cooridor_high
     trigger: numeric_state
   - entity_id: sensor.bedroom_temperature_humidity_sensor_humidity
-    below: 76
+    below: 65
     id: bedroom_low
     trigger: numeric_state
   - entity_id: sensor.dehumidifier_temperature_humidity_sensor_humidity
-    below: 76
+    below: 65
     id: cooridor_low
     trigger: numeric_state
 conditions: []
@@ -25,31 +27,67 @@ actions:
             conditions:
               - condition: numeric_state
                 entity_id: sensor.bedroom_temperature_humidity_sensor_humidity
-                above: 80
+                above: 71
               - condition: numeric_state
                 entity_id: sensor.dehumidifier_temperature_humidity_sensor_humidity
-                above: 80
+                above: 71
           - condition: numeric_state
             entity_id: sensor.dehumidifier_current_consumption
             below: 10
         sequence:
-          - target:
-              entity_id: switch.dehumidifier_finger_bot
-            action: switch.turn_on
+          - repeat:
+              count: 3
+              sequence:
+                - target:
+                    entity_id: switch.dehumidifier_finger_bot
+                  action: switch.turn_on
+                - delay:
+                    seconds: 15
+                - if:
+                    - condition: numeric_state
+                      entity_id: sensor.dehumidifier_current_consumption
+                      above: 10
+                  then:
+                    - stop: Dehumidifier started successfully
+                  else:
+                    - if:
+                        - condition: template
+                          value_template: "{{ repeat.index < 3 }}"
+                      then:
+                        - delay:
+                            seconds: 45
       - conditions:
           - condition: and
             conditions:
               - condition: numeric_state
                 entity_id: sensor.bedroom_temperature_humidity_sensor_humidity
-                below: 76
+                below: 65
               - condition: numeric_state
                 entity_id: sensor.dehumidifier_temperature_humidity_sensor_humidity
-                below: 76
+                below: 65
           - condition: numeric_state
             entity_id: sensor.dehumidifier_current_consumption
-            above: 50
+            above: 10
         sequence:
-          - target:
-              entity_id: switch.dehumidifier_finger_bot
-            action: switch.turn_off
+          - repeat:
+              count: 3
+              sequence:
+                - target:
+                    entity_id: switch.dehumidifier_finger_bot
+                  action: switch.turn_off
+                - delay:
+                    seconds: 15
+                - if:
+                    - condition: numeric_state
+                      entity_id: sensor.dehumidifier_current_consumption
+                      below: 10
+                  then:
+                    - stop: Dehumidifier stopped successfully
+                  else:
+                    - if:
+                        - condition: template
+                          value_template: "{{ repeat.index < 3 }}"
+                      then:
+                        - delay:
+                            seconds: 45
 mode: single
