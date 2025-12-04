@@ -1,0 +1,36 @@
+alias: Red Button Control
+description: ""
+triggers:
+  - id: single_press
+    domain: mqtt
+    device_id: 11a3825989a4d0ebcd2d98f70f7c1337
+    type: action
+    subtype: single
+    trigger: device
+  - id: double_press
+    domain: mqtt
+    device_id: 11a3825989a4d0ebcd2d98f70f7c1337
+    type: action
+    subtype: double
+    trigger: device
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: single_press
+        sequence:
+          - type: toggle
+            device_id: 483733bbdbc0724756159ffd5d681eea
+            entity_id: df8d40e2e4f12af2f79fc217161924d4
+            domain: switch
+      - conditions:
+          - condition: trigger
+            id: double_press
+        sequence:
+          - type: toggle
+            device_id: 5fc9c1c4cfd0c931cdf8ae6ad775756a
+            entity_id: 2f54e435e761e24d0e665978463868b0
+            domain: switch
+    default: []
+mode: single
