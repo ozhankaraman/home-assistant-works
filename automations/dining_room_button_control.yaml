@@ -1,0 +1,36 @@
+alias: Dining Room Button Control
+description: ""
+triggers:
+  - id: single_press
+    domain: mqtt
+    device_id: 7b034a30720db5f02be0728070712d92
+    type: action
+    subtype: single
+    trigger: device
+  - id: double_press
+    domain: mqtt
+    device_id: 7b034a30720db5f02be0728070712d92
+    type: action
+    subtype: double
+    trigger: device
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: single_press
+        sequence:
+          - type: toggle
+            device_id: a34c324c896fd6cfe5d3693065575851
+            entity_id: switch.dining_room_sofa_lamp
+            domain: switch
+      - conditions:
+          - condition: trigger
+            id: double_press
+        sequence:
+          - type: toggle
+            device_id: 7721f1ea1bac38f74def973674d9b8f4
+            entity_id: switch.dining_room_bookcase_lamp
+            domain: switch
+    default: []
+mode: single
