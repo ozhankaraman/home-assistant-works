@@ -1,0 +1,41 @@
+alias: Blue Button Control
+description: ""
+triggers:
+  - domain: mqtt
+    device_id: f423e463aee5b605a78f96e8f8fbe00c
+    type: action
+    subtype: double
+    trigger: device
+    id: double_press
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: double_press
+        sequence:
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: 7dee58e278a5cebf26ad449007174ddf
+                    state: "on"
+                sequence:
+                  - delay:
+                      hours: 0
+                      minutes: 0
+                      seconds: 5
+                      milliseconds: 0
+                  - type: turn_off
+                    device_id: 8d8b835a7d79420cc858abbb51ce023c
+                    entity_id: 7dee58e278a5cebf26ad449007174ddf
+                    domain: switch
+              - conditions:
+                  - condition: state
+                    entity_id: 7dee58e278a5cebf26ad449007174ddf
+                    state: "off"
+                sequence:
+                  - type: turn_on
+                    device_id: 8d8b835a7d79420cc858abbb51ce023c
+                    entity_id: 7dee58e278a5cebf26ad449007174ddf
+                    domain: switch
+mode: single
