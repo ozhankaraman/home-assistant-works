@@ -1,0 +1,16 @@
+alias: Auto-shutdown Tilki Wifi AP at night
+description: Every night at 00:15, turn off the access point if it's on
+triggers:
+  - at: "00:15:00"
+    trigger: time
+conditions:
+  - condition: state
+    entity_id: switch.tilki_wifi
+    state:
+      - "on"
+actions:
+  - action: homeassistant.turn_off
+    data: {}
+    target:
+      entity_id: switch.tilki_wifi
+mode: single
