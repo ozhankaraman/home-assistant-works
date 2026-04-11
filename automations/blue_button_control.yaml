@@ -23,7 +23,7 @@ actions:
                   - delay:
                       hours: 0
                       minutes: 0
-                      seconds: 5
+                      seconds: 30
                       milliseconds: 0
                   - type: turn_off
                     device_id: 8d8b835a7d79420cc858abbb51ce023c
