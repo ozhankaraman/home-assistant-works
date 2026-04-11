@@ -25,6 +25,19 @@ actions:
                       minutes: 0
                       seconds: 30
                       milliseconds: 0
+                  - if:
+                      - condition: state
+                        entity_id: switch.imac_em_switch
+                        state: "on"
+                    then:
+                      - action: switch.turn_off
+                        target:
+                          entity_id: switch.imac_em_switch
+                      - delay:
+                          hours: 0
+                          minutes: 0
+                          seconds: 5
+                          milliseconds: 0
                   - type: turn_off
                     device_id: 8d8b835a7d79420cc858abbb51ce023c
                     entity_id: 7dee58e278a5cebf26ad449007174ddf
